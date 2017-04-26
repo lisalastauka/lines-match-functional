@@ -1,0 +1,72 @@
+<html>
+<head>
+    <link rel="stylesheet" href="lib/css/bootstrap.min.css">
+    <script src="lib/js/jquery.min.js"></script>
+    <script src="lib/js/bootstrap.min.js"></script>
+    <script src="lib/js/mustache.min.js"></script>
+    <script src="levenshtein.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Lines Match</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <form id="filesToMatch">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>Files:</strong>
+                    </div>
+                    <div class="list-group">
+                        <div class="form-group">
+                            <div class="list-group-item">
+                                <label for="input">Input:</label>
+                                <input type="file" id="input" name="input">
+                            </div>
+                            <div class="list-group-item">
+                                <label for="patterns">Patterns:</label>
+                                <input type="file" id="patterns" name="pattern">
+                            </div>
+                        </div>
+                        <div class="list-group-item">
+                            <input type="button" value="Match" class="btn btn-primary " onclick="getForm('filesToMatch')">
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+            <div class="col-lg-6" id="target"></div>
+            <script id="template" type="text/html">
+                {{#data}}
+                {{#data.message}}
+                <div class="alert alert-danger alert-dismissible fade in">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>{{data.message}}</strong>
+                </div>
+                {{/data.message}}
+                {{#data.modes}}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong>{{modeName}}</strong>
+                    </div>
+                    <div class="list-group">
+                        {{#modeValue}}
+                        <div class="list-group-item">{{.}}</div>
+                        {{/modeValue}}
+                        {{^modeValue}}
+                        <div class="list-group-item">No match!</div>
+                        {{/modeValue}}
+                    </div>
+                </div>
+                {{/data.modes}}
+                {{/data}}
+            </script>
+        </div>
+    </div>
+    <script src="lines-match.js"></script>
+</body>
+</html>
