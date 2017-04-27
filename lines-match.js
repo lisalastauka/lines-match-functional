@@ -1,15 +1,12 @@
 const inputSelector = 'input';
 const patternsSelector = 'patterns';
 const textType = /text.*/;
+const element = (id) => document.getElementById(id);
 
 const intersection = (a, b) => a.filter(c => b.includes(c));
 const partial = (a, b) => a.filter(c => b.some(d => c.includes(d)));
 const similar = (a, b) => a.filter(c => b.some(d => levenstein(c, d) <= 1));
 const modeList = [intersection, partial, similar];
-
-const element = (id) => document.getElementById(id);
-const template = element('template').innerHTML;
-const target = element('target');
 
 const getFile = (form, field) => form[field].files[0];
 const validateFile = (file) => file && file.type.match(textType);
@@ -34,13 +31,15 @@ const readFile = file =>
     });
 
 const render = (result, error) => {
-    Mustache.parse(template);
+    const template = element('template').innerHTML;
+    const target = element('target');
     const rendered = Mustache.render(template, {
         data: {
             modes: result,
             message: error
         }
     });
+    Mustache.parse(template);
     target.innerHTML = rendered;
 };
 
@@ -54,12 +53,12 @@ const parse = str => str.split('\n')
                         .filter(s => !!s);
 
 const getForm = (formId) => {
-    [inputPromise, patternsPromise] = [inputSelector, patternsSelector].map(selector =>
+    const readFilePromise = [inputSelector, patternsSelector].map(selector =>
         readFile(getFile(element(formId), selector)));
 
-    return Promise.all([inputPromise, patternsPromise])
+    return Promise.all(readFilePromise)
         .then((data) => {
-            [input, patterns] = data.map(element => parse(element));
+            const [input, patterns] = data.map(element => parse(element));
             const result = modeList.map(mode => invokeFunction(mode, input, patterns));
             const formatResult = formatData(result);
             render(formatResult);
